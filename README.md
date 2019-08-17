@@ -19,11 +19,10 @@ o generar el war con:
     $ mvn package -Pproduction-mode
  
 ## Pruebas
-- Se probó en Winsows Server 2012R2
+- Winsows Server 2012R2
+- Windows 7
+
 
 ## Capturas
 ![alt text](https://raw.githubusercontent.com/thelabs-dev/Remote-Desktop-Status/master/readme/img_1.png)
 ![alt text](https://raw.githubusercontent.com/thelabs-dev/Remote-Desktop-Status/master/readme/img_2.png)
-
-## Referencias
-- 
