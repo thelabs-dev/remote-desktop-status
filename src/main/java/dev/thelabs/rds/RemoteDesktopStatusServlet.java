@@ -41,7 +41,6 @@ public class RemoteDesktopStatusServlet extends HttpServlet
                 if(!primerLinea){
                     Pattern r = Pattern.compile(pattern);
                     Matcher m = r.matcher(s);
-                    System.out.println(s);
                     if (m.find( )) {
                         String username         = m.group(1).trim();
                         String sessionname      = m.group(2).trim();
@@ -113,7 +112,7 @@ public class RemoteDesktopStatusServlet extends HttpServlet
         try {
             html += "\n<div class=\"col-12\"><div class=\"list-group\" id=\"list-tab\" role=\"tablist\">";
             for (User user : users) {
-                html += "\n<a href=\"#\" class=\"list-group-item list-group-item-action d-flex justify-content-between align-items-center\" id=\"list-profile-list\" data-toggle=\"modal\" role=\"tab\" aria-controls=\"profile\">";
+                html += "\n<a class=\"list-group-item list-group-item-action d-flex justify-content-between align-items-center\" id=\"list-profile-list\" data-toggle=\"modal\" role=\"tab\" aria-controls=\"profile\">";
                 html += user.name.trim();
                 html += "<span class=\"badge " + (user.sessionactive ? "ocupado": "libre") + " badge-pill\">" + (user.sessionactive ? "OCUPADO": "LIBRE") +"</span>";
                 html += "\n</a>";
