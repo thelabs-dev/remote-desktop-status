@@ -3,6 +3,7 @@
 ## Descripción
 Esta es una herramienta web desarrollada en java que permite ver el estado de las sesiones remotas en un Windows Server.
 La aplicación lista todas las sesiones de usuarios activas, y de ellas cuáles tienen una conexión por escritorio remoto, marcándola como “OCUPADO”.
+Mientras se tenga foco en la página, la misma es actualizada cada 30 segundos.
 
 ## [Releases](https://github.com/thelabs-dev/Remote-Desktop-Status/releases)
 

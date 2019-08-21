@@ -2,7 +2,10 @@ package dev.thelabs.rds;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -29,7 +32,6 @@ public class RemoteDesktopStatusServlet extends HttpServlet
         String command      = "powershell.exe -Command quser";
         String pattern      = "^ *(.+?) +(.*?) +([0-9]+?) +(.*?) ";
 
-        System.out.println(command);
         Process process;
         try {
             process = Runtime.getRuntime().exec(command);
@@ -64,7 +66,6 @@ public class RemoteDesktopStatusServlet extends HttpServlet
                 errorstr += s + "<br>";
             }
             stderr.close();
-            //System.out.println("o: " +errorstr);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -73,6 +74,9 @@ public class RemoteDesktopStatusServlet extends HttpServlet
     }
 
     private String getIndexPage(){
+        DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss"); //"yyyy/MM/dd HH:mm:ss");
+	    Date  date = new Date();
+        
         String html = "";
         html += "<!doctype html>";
         html += "<html lang=\"en\">";
@@ -92,13 +96,19 @@ public class RemoteDesktopStatusServlet extends HttpServlet
         html += "           </span></a>";
         html += "       </div>";
         html += "   </nav>";
-        html += "<div class=\"container\">";
-        html += "   <div class=\"row\">";
-        html +=        getItemsInHTML();
+        html += "   <nav aria-label=\"breadcrumb\" class=\"container\">";
+        html += "       <ol class=\"breadcrumb\">";
+        html += "           <li class=\"breadcrumb-item active\" aria-current=\"page\">Update: " + dateFormat.format(date) + "</li>";
+        html += "       </ol>";
+        html += "   </nav>";
+        html += "   <div class=\"container\">";
+        html += "       <div class=\"row\">";
+        html +=         getItemsInHTML();
+        html += "       </div>";
         html += "   </div>";
-        html += "</div>";
         html += "    <script src=\"js/jquery.min.js\" crossorigin=\"anonymous\"></script>";
         html += "    <script src=\"js/popper.min.js\" crossorigin=\"anonymous\"></script>";
+        html += "    <script src=\"js/refresh.js\" crossorigin=\"anonymous\"></script>";
         html += "    <script src=\"js/bootstrap.min.js\" crossorigin=\"anonymous\"></script>";
         html +=      getStyleHTML();
         html += "  </body>";
