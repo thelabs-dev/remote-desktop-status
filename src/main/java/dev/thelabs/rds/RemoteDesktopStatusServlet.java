@@ -6,7 +6,10 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.servlet.annotation.WebServlet;
@@ -73,11 +76,47 @@ public class RemoteDesktopStatusServlet extends HttpServlet
         return users;
     }
 
+    static private Set<String> obtenerClientes() {
+        //  TCP    192.168.0.120:3389     192.168.0.110:51461    ESTABLISHED
+        Set<String> clientes    = new HashSet<String>();
+        String command      = "netstat -n | find \"3389\" | find \"ESTABLISHED\"";
+        String pattern      = "^ *?[a-zA-Z]+? *?\\b\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\b:[0-9]+? +?(\\b\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\b):[0-9]+ *?[a-zA-Z]+";
+        Process process;
+        try {
+            process = Runtime.getRuntime().exec("cmd.exe /c " + command);
+            BufferedReader reader=new BufferedReader( new InputStreamReader(process.getInputStream()));
+            process.getOutputStream().close();
+            String s; 
+            while ((s = reader.readLine()) != null){
+                Pattern r = Pattern.compile(pattern);
+                Matcher m = r.matcher(s);
+                if (m.find( )) {
+                    String ip         = m.group(1).trim();
+                    clientes.add(ip);
+                }
+            }  
+            reader.close();
+            BufferedReader stderr = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+            String errorstr= "";
+            while ((s = stderr.readLine()) != null) {
+                errorstr += s + "\n";
+            }
+            if (!errorstr.isEmpty())
+                System.out.println(errorstr);
+            stderr.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+       
+        return clientes;
+    }
+
     private String getIndexPage(){
         DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss"); //"yyyy/MM/dd HH:mm:ss");
 	    Date  date = new Date();
         
         String html = "";
+        String htmlClientes = getClientesInHTML();
         html += "<!doctype html>";
         html += "<html lang=\"en\">";
         html += "<head>";
@@ -103,7 +142,8 @@ public class RemoteDesktopStatusServlet extends HttpServlet
         html += "   </nav>";
         html += "   <div class=\"container\">";
         html += "       <div class=\"row\">";
-        html +=         getItemsInHTML();
+        html +=         getItemsInHTML(htmlClientes.isEmpty());
+        html +=         htmlClientes;
         html += "       </div>";
         html += "   </div>";
         html += "    <script src=\"js/jquery.min.js\" crossorigin=\"anonymous\"></script>";
@@ -116,11 +156,11 @@ public class RemoteDesktopStatusServlet extends HttpServlet
         return html;
     }
 
-    static private String getItemsInHTML(){
+    static private String getItemsInHTML(Boolean isFull){
         List<User> users = obtenerUsuarios();
         String html = "";
         try {
-            html += "\n<div class=\"col-12\"><div class=\"list-group\" id=\"list-tab\" role=\"tablist\">";
+            html += "\n<div class=\"col-" + (isFull ? "12" : "8") +"\"><div class=\"list-group\" id=\"list-tab\" role=\"tablist\">";
             for (User user : users) {
                 html += "\n<a class=\"list-group-item list-group-item-action d-flex justify-content-between align-items-center\" id=\"list-profile-list\" data-toggle=\"modal\" role=\"tab\" aria-controls=\"profile\">";
                 html += user.name.trim();
@@ -130,6 +170,25 @@ public class RemoteDesktopStatusServlet extends HttpServlet
             html += "\n</div></div>";
         } catch (Exception e) {
             e.printStackTrace();
+        }
+        return html;
+    }
+
+    static private String getClientesInHTML(){
+        Set<String> clientes = obtenerClientes();
+        String html = "";
+        if (clientes.size()>0){
+            try {
+                html += "\n<div class=\"col-4\"><div class=\"list-group\" id=\"list-tab\" role=\"tablist\">";
+                for (String user : clientes) {
+                    html += "\n<a class=\"list-group-item list-group-item-action d-flex justify-content-between align-items-center\" id=\"list-profile-list\" data-toggle=\"modal\" role=\"tab\" aria-controls=\"profile\">";
+                    html += user;
+                    html += "\n</a>";
+                }
+                html += "\n</div></div>";
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         return html;
     }
