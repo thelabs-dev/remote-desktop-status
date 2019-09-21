@@ -1,4 +1,4 @@
-# Remote-Desktop-Status
+# Remote-Desktop-Status [![Build Status](https://travis-ci.org/thelabs-dev/Remote-Desktop-Status.svg?branch=master)](https://travis-ci.org/thelabs-dev/Remote-Desktop-Status)
 
 ## Descripción
 Esta es una herramienta web desarrollada en java que permite ver el estado de las sesiones remotas en un Windows Server.
