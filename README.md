@@ -18,7 +18,23 @@ Ejecutar con:
 o generar el war con:
 
     $ mvn package -Pproduction-mode
- 
+
+### Mapeos de IPs
+Para cambiar las IPs que se muestra por nombre de usuario, el mapeo se realiza en el archivo _C:\thelabs\rds\users.xml_
+El archivo users.xml es un XML que tiene este formato:
+
+    <?xml version="1.0"?>
+    <users>
+        <user>
+            <ip>192.168.0.100</ip>
+            <name>Francisco</name>
+        </user>
+        ...
+    </users>	
+
+* **ip** : IP de la maquina
+* **name** : Nombre asociado a la IP
+
 ## Pruebas
 - Winsows Server 2012R2
 - Windows 7

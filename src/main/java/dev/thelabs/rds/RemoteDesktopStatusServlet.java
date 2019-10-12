@@ -16,8 +16,18 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 import java.io.BufferedReader;
+import java.io.File;
 
 @WebServlet(urlPatterns = {"/view"}, loadOnStartup = 1)
 public class RemoteDesktopStatusServlet extends HttpServlet
@@ -182,7 +192,7 @@ public class RemoteDesktopStatusServlet extends HttpServlet
                 html += "\n<div class=\"col-4\"><div class=\"list-group\" id=\"list-tab\" role=\"tablist\">";
                 for (String user : clientes) {
                     html += "\n<a class=\"list-group-item list-group-item-action d-flex justify-content-between align-items-center\" id=\"list-profile-list\" data-toggle=\"modal\" role=\"tab\" aria-controls=\"profile\">";
-                    html += user;
+                    html += getNameFromIP(user).trim();;
                     html += "\n</a>";
                 }
                 html += "\n</div></div>";
@@ -193,6 +203,46 @@ public class RemoteDesktopStatusServlet extends HttpServlet
         return html;
     }
 
+    static private String getNameFromIP(String userIP){
+        File fXmlFile = new File("C:\\thelabs\\rds\\users.xml");
+        if (fXmlFile.exists()){
+            DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+			try {
+                DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+                Document doc = dBuilder.parse(fXmlFile);
+                doc.getDocumentElement().normalize();
+                NodeList kbs = doc.getElementsByTagName("user");
+                for (int temp = 0; temp < kbs.getLength(); temp++) {
+                    Node nNode = kbs.item(temp);                      
+                    if (nNode.getNodeType() == Node.ELEMENT_NODE) {
+                        Element eElement = (Element) nNode;
+                        String ip = getStringElement(eElement, "ip");
+                        if (userIP.equals(ip)){
+                            String name         = getStringElement(eElement,"name");
+                            if (name.isEmpty()){
+                                return userIP;
+                            }else{
+                                return name;
+                            }
+                        }
+                    }
+                }
+			} catch (ParserConfigurationException e) {
+				e.printStackTrace();
+			} catch (SAXException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+        }
+        
+        return userIP;           
+    }
+
+    public static String getStringElement(Element eElement, String key){
+        String value   = ((eElement.getElementsByTagName(key) != null && eElement.getElementsByTagName(key).getLength() > 0) ? eElement.getElementsByTagName(key).item(0).getTextContent() : "");
+        return value;
+    }
 
     static private String getStyleHTML(){
         String html = "";
