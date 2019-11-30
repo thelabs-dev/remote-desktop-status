@@ -43,3 +43,6 @@ El archivo users.xml es un XML que tiene este formato:
 ## Capturas
 ![alt text](https://raw.githubusercontent.com/thelabs-dev/Remote-Desktop-Status/master/readme/img_1.png)
 ![alt text](https://raw.githubusercontent.com/thelabs-dev/Remote-Desktop-Status/master/readme/img_2.png)
+
+## Créditos
+[GitHub Corners](https://github.com/tholman/github-corners)
